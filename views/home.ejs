@@ -108,36 +108,6 @@
             color: #374151;
             font-weight: 500;
         }
-
-        .button-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .url-form {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .login-message {
-            text-align: center;
-            color: #4F46E5;
-            font-size: 1.2rem;
-            margin: 2rem 0;
-        }
-
-        .disabled-form {
-            position: relative;
-        }
         
     </style>
     <meta charset="UTF-8">
@@ -146,9 +116,9 @@
 </head>
 <body>
     <div class="container">
-        <div class="header-container">
-            <h1>URL Shortener</h1>
-            <div class="button-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1 onclick="window.location.href='/'" style="cursor: pointer;">URL Shortener</h1>
+            <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
                 <% if(typeof user === 'undefined' || user === null) { %>
                     <button onclick="window.location.href='login'">Login</button>
                     <button onclick="window.location.href='signup'">Signup</button>
@@ -160,14 +130,14 @@
         <hr class="horizontal-line"/>
         
         <% if(typeof user === 'undefined' || user === null) { %>
-            <div class="login-message">
+            <div style="text-align: center; color: #4F46E5; font-size: 1.2rem; margin: 2rem 0;">
                 Please login or signup to use the URL shortener service.
             </div>
-            <div class="url-form">
-                <form>
+            <div style="position: relative;">
+                <form onsubmit="event.preventDefault(); window.location.href='login';">
                     <label>Enter Your Original URL</label>
                     <input type="text" name="url" placeholder="https://example.com"/>
-                    <button type="button" onclick="window.location.href='login'">Generate</button>
+                    <button type="submit">Generate</button>
                 </form>
             </div>
         <% } else { %>
@@ -177,7 +147,7 @@
                     <span><a href="http://localhost:3000/url/visit/<%= id %>">http://localhost:3000/url/visit/<%= id %></a></span>
                 </div>
             <% } %>
-            <div class="url-form">
+            <div style="margin-top: 2rem; display: flex; justify-content: center;">
                 <form method="POST" action="/url/visit">
                     <label>Enter Your Original URL</label>
                     <input type="text" name="url" placeholder="https://example.com"/>
