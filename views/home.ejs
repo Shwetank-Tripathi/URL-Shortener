@@ -164,10 +164,10 @@
                 Please login or signup to use the URL shortener service.
             </div>
             <div class="url-form">
-                <form method="POST" action="/url/visit" class="disabled-form">
+                <form>
                     <label>Enter Your Original URL</label>
                     <input type="text" name="url" placeholder="https://example.com"/>
-                    <button type="submit" >Generate</button>
+                    <button type="button" onclick="window.location.href='login'">Generate</button>
                 </form>
             </div>
         <% } else { %>
