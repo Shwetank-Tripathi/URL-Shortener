@@ -1,27 +1,29 @@
 const {getUser} = require("../services/auth");
 
+async function checkForAuthentication(req, res, next) {
+    try {
+        const userUid = req.cookies?.uid;
+        if (!userUid) {
+            req.user = null;
+            return next();
+        }
 
-async function checkForAuthentication(req,res,next){
-    const userUid = req.cookies?.uid; //Checking for any cookie having user's id.
-    req.user = null;    //Setting the user to null
-    if(!userUid || userUid == undefined) next(); //If no userUid is found, then move to the next middleware
-    try{
-        const user = await getUser(userUid); //Getting the user from the database
-        req.user = user; //Setting the user to the request object
-        next(); //Moving to the next middleware
-    }catch(error){
+        const user = await getUser(userUid);
+        req.user = user;
+        return next();
+    } catch (error) {
         console.error("Error in checkForAuthentication middleware:", error);
-        req.user = null; //Setting the user to null
-        next(); //Moving to the next middleware
+        req.user = null;
+        return next();
     }
-};
+}
 
-async function restrictTo(req,res,next){
-    if(!req.user){ //if user is null then render login page(only for url routes)
-        return res.render("login"); 
+async function restrictTo(req, res, next) {
+    if (!req.user) {
+        return res.redirect("/login");
     }
-    return next(); // Allow the request to proceed if user is authenticated
-};
+    return next();
+}
 
 /*
 async function restrictToLoggedInUserOnly(req,res,next) {
