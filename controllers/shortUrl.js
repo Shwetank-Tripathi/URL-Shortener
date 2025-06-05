@@ -1,6 +1,12 @@
 const URL = require("../models/urlShort");
 const shortid = require("shortid");
 
+function notUser(req,res){
+    if(!req.user){
+        return res.render("login");
+    }
+};
+
 async function handleGetShortId(req,res){
     const body = req.body;
     if(!body.url) return res.status(400).json({error: "URL is required"});

@@ -5,13 +5,14 @@ const staticRoute = require("./routes/staticRoutes.js");
 const userRoute = require("./routes/user.js");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const {restrictToLoggedInUserOnly,checkAuth} = require("./middlewares/auth.js");
+const {checkForAuthentication, restrictTo} = require("./middlewares/auth.js");
+require("dotenv").config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8000;  // Added fallback port
 
 //connecting Database
-connectMongoDb("mongodb://127.0.0.1:27017/short-urls").then(
+connectMongoDb(process.env.DATABASE_URL).then(
     console.log("mongoDb connected")
 );
 
@@ -21,9 +22,10 @@ app.set("views", path.resolve("./views")); //This sets the directory where Expre
 app.use(express.json()); //This is a middleware that parses incoming requests with JSON payloads and is based on body-parser.
 app.use(express.urlencoded({extended: false})); //This is a middleware that parses incoming requests with URL-encoded payloads.
 app.use(cookieParser()); //Ta middleware that parses cookies attached to the client request object.
+app.use(checkForAuthentication);
 
-app.use("/url", restrictToLoggedInUserOnly, urlRoute); //
-app.use("/",checkAuth, staticRoute);
+app.use("/url", restrictTo, urlRoute);
+app.use("/", staticRoute);
 app.use("/user", userRoute);
 
 

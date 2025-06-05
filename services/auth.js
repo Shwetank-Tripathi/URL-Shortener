@@ -1,6 +1,6 @@
-//This is just a diary that will keep log of user by mapping them 
+//This is just a diary that will keep log of user by mapping them
 const jwt = require("jsonwebtoken");
-const secret = "Shwetank#123"
+const secret = process.env.JWT_SECRET;
 
 function setUser(user){
     return jwt.sign(user,secret);
