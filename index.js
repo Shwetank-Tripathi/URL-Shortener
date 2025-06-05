@@ -9,7 +9,7 @@ const {checkForAuthentication, restrictTo} = require("./middlewares/auth.js");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 8000;  // Added fallback port
+const PORT = process.env.PORT || 3000;  // Added fallback port
 
 //connecting Database
 connectMongoDb(process.env.DATABASE_URL).then(
