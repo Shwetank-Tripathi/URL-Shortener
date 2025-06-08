@@ -2,14 +2,16 @@ const User = require("../models/user");
 const {setUser,getUser} = require("../services/auth");
 
 async function handleUserSignup(req, res) {
-    const { name, email, password } = req.body;
     try {
+        const { name, email, password } = req.body;
         const user = await User.findOne({ email });
+        
         if (user) {
             return res.render("signup", {
                 error: "User already exists"
             });
         }
+
         await User.create({ name, email, password });
         return res.redirect("/login");
     } catch (error) {
@@ -33,11 +35,7 @@ async function handleUserLogin(req, res) {
 
         const token = setUser(user.toObject());
         res.cookie("uid", token);
-        res.send(`
-            <script>
-                window.location.href = "/";
-            </script>
-        `);
+        return res.redirect("/");
     } catch (error) {
         console.error("Login error:", error);
         return res.render("login", {
