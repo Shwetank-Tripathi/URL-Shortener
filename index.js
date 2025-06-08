@@ -5,7 +5,7 @@ const staticRoute = require("./routes/staticRoutes.js");
 const userRoute = require("./routes/user.js");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const {checkForAuthentication, restrictTo} = require("./middlewares/auth.js");
+const {checkForAuthentication} = require("./middlewares/auth.js");
 require("dotenv").config();
 
 const app = express();
@@ -25,7 +25,7 @@ app.use(cookieParser()); //Ta middleware that parses cookies attached to the cli
 app.use(checkForAuthentication);
 
 app.use("/user", userRoute);
-app.use("/url", restrictTo, urlRoute);
+app.use("/url", urlRoute);
 app.use("/", staticRoute);
 
 app.listen(PORT,()=>{
