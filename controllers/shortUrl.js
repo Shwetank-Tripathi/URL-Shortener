@@ -17,7 +17,8 @@ async function handleGetShortId(req,res){
         return res.render("home", {
             user: req.user,
             id: existingURL.shortId,
-            urls: allurls
+            urls: allurls,
+            host: req.headers.host,
         });
     }
     
@@ -33,7 +34,8 @@ async function handleGetShortId(req,res){
     return res.render("home", {
         user: req.user,
         id: shortID,
-        urls: allurls
+        urls: allurls,
+        host: req.headers.host,
     });
 }
 
