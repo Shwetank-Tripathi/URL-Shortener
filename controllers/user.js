@@ -49,12 +49,12 @@ async function handleUserSignup(req, res) {
         const hashPassword = crypto.createHmac("sha256", secret).update(password).digest("hex");
         await User.create({ name, email: lowerEmail, password: hashPassword });
         return res.redirect("/login");
-    } catch (error) {
-        console.error("Signup error:", error);
-        // return res.render("signup", {
-        //     error: "Signup failed. Please try again."
-        // });
-        return res.status(500);
+        } catch (error) {
+            console.error("Signup error:", error);
+            // return res.render("signup", {
+            //     error: "Signup failed. Please try again."
+            // });
+            return res.status(500).send({error:"Signup failed. Please try again."});
     }
 }
 
