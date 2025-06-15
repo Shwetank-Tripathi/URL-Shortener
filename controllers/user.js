@@ -1,8 +1,9 @@
-const secret = process.env.HASH_KEY;
 const User = require("../models/user");
 const {setUser,getUser} = require("../services/auth");
 const crypto = require("crypto");
 const {sendEmail} = require("../services/emailService");
+
+const secret = process.env.HASH_KEY;
 
 async function handleSendOtp(req, res) {
     try{
@@ -63,6 +64,7 @@ async function handleUserLogin(req, res) {
         const { email, password } = req.body;
         const lowerEmail = email.toLowerCase();
         const hashPassword = crypto.createHmac("sha256", secret).update(password).digest("hex");
+        console.log(hashPassword);
         const user = await User.findOne({ email: lowerEmail, password: hashPassword });
         
         if(!user){
