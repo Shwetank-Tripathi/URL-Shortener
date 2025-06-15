@@ -6,6 +6,7 @@ const userRoute = require("./routes/user.js");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const {checkForAuthentication} = require("./middlewares/auth.js");
+const bodyParser = require("body-parser");
 require("dotenv").config();
 
 const app = express();
@@ -22,7 +23,9 @@ app.set("views", path.resolve("./views")); //This sets the directory where Expre
 app.use(express.json()); //This is a middleware that parses incoming requests with JSON payloads and is based on body-parser.
 app.use(express.urlencoded({extended: true})); //This is a middleware that parses incoming requests with URL-encoded payloads.
 app.use(cookieParser()); //Ta middleware that parses cookies attached to the client request object.
+app.use(bodyParser.json());
 app.use(checkForAuthentication);
+
 
 app.use("/user", userRoute);
 app.use("/url", urlRoute);

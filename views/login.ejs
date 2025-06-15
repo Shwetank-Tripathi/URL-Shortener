@@ -16,6 +16,7 @@
         }
 
         .container {
+            position: relative;
             background: rgba(255, 255, 255, 0.9);
             padding: 2rem;
             border-radius: 12px;
@@ -76,13 +77,27 @@
         }
 
         .error {
-            color: #dc2626;
-            background: #fee2e2;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(220, 38, 38, 0.95);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-weight: 500;
             text-align: center;
-            border: 1px solid #fecaca;
+            min-width: 200px;
+            opacity: 1;
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        .error.fade-out {
+            top: -100px;
+            opacity: 0;
         }
     </style>
 </head>
@@ -92,19 +107,79 @@
         <% if (locals.error) { %>
             <div class="error"><%= error %></div>
         <% } %>
-        <form method="post" action="/user/login">
+        <form>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" required name="email" placeholder="john@example.com">
+                <input type="email" required name="email" id="email" placeholder="john@example.com">
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" required name="password" placeholder="Password">
+                <input type="password" required name="password" id="password" placeholder="Password">
             </div>
-            <button type="submit">Login</button>
+            <button type="button" id="loginbtn">Login</button>
         </form>
         <br />
-        <a href="signup">Don't have an account? Sign up</a>
+        <a onclick="window.location.href = '/signup'; return false;" style="cursor: pointer; color: #4F46E5;">Don't have an account? Sign up</a>
     </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        const loginbtn = document.getElementById("loginbtn");
+        
+        const showError = (message) => {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            // Remove any existing error
+            const existingError = document.querySelector('.error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            const container = document.querySelector('.container');
+            container.appendChild(errorDiv);
+            
+            // Trigger fade out animation
+            setTimeout(() => {
+                errorDiv.classList.add('fade-out');
+                setTimeout(() => errorDiv.remove(), 500);
+            }, 1500);
+        };
+
+
+        loginbtn.addEventListener("click", async ()=>{
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            console.log(email, password);
+            if(!email || !password){
+                showError("Please fill in all fields");
+                return;
+            }
+            try{
+                const response = await fetch("/user/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({email, password})
+                });
+                const data = await response.json();
+                if(response.status==400){
+                    showError(data.message);
+                    return;
+                }
+                // If login is successful, redirect to home page
+                else if(response.status==200) {
+                    window.location.href = "/";
+                } else {
+                    showError('Unexpected response from server. Please try again.');
+                }
+            }catch(error){
+                console.error("Error logging in:", error);
+                showError('An unexpected error occurred. Please try again.');
+            }
+        });
+    });
+</script>
 </html>
