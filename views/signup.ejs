@@ -173,7 +173,10 @@
                 <label>OTP</label>
                 <input type="text" id="otp" placeholder="Enter OTP">
                 <button type="button" id="verifyotpbtn">Verify</button>
-                <button type="button" id="resendotpbtn" class="otpsendbtn">Resend OTP</button>
+                <div id="resendotpbtnContainer">
+                    <button type="button" id="resendotpbtn" class="otpsendbtn" style="display: none;">Resend OTP</button>
+                    <div id="resendotpbtnText" style="margin-top: 20px;">Resend OTP in <span id="resendotpbtnTime">90</span> seconds</div>
+                </div>
             </div>
             <div class="form-group" id="passwordContainer" style="display: none;">
                 <label>Password</label>
@@ -209,6 +212,23 @@
                 setTimeout(() => errorDiv.remove(), 500);
             }, 1500);
         }
+        //OTP Timer
+        let otpTimer;
+        function startOtpTimer(){
+            document.getElementById("resendotpbtn").style.display = "none";
+            document.getElementById("resendotpbtnText").style.display = "block";
+            let timeLeft = 90;
+            otpTimer = setInterval(() => {
+                document.getElementById("resendotpbtnTime").textContent = timeLeft;
+                timeLeft--;
+                if(timeLeft < 0){
+                    clearInterval(otpTimer);
+                    document.getElementById("resendotpbtn").style.display = "block";
+                    document.getElementById("resendotpbtnText").style.display = "none";
+                }
+            },1000);
+        }
+
 
         // Sending OTP
         async function handleSendOtp(event){
@@ -243,6 +263,7 @@
                     document.getElementById("sendotpbtn").style.display = "none";
                     document.getElementById("email").readOnly = true;
                     document.getElementById("name").readOnly = true;
+                    startOtpTimer();
                 }
                 else{
                     showError("Unexpected response from server. Please try again.");
@@ -316,6 +337,7 @@
         togglePassword.addEventListener("mouseleave", () => {
             passwordInput.type = "password";
         });
+
     });
 </script>
 </html>
