@@ -7,16 +7,22 @@ const secret = process.env.HASH_KEY;
 
 async function handleSendOtp(req, res) {
     try{
-        const {email} = req.body;
+        const {email,text} = req.body;
         const lowerEmail = email.toLowerCase();
         const user = await User.findOne({email: lowerEmail});
-        if(user){
+
+        if(user && text==="signup"){
             return res.status(400).json({ message: "User already exists" });
         }
-        const otp = Math.floor(100000 + Math.random() * 900000);
-        await sendEmail(lowerEmail,otp);
-        const hashOTP = crypto.createHmac("sha256", secret).update(otp.toString()).digest("hex");
-        res.status(200).cookie("otp", hashOTP, { httpOnly: true, secure: true, maxAge: 300000 }).json({ message: "OTP sent successfully" });
+        else if((!user && text==="resetpassword")){
+            return res.status(400).json({ message: "User doesnot exists" });
+        }
+        else if((!user && text==="signup") || (user && text==="resetpassword") ){
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            await sendEmail(lowerEmail,otp);
+            const hashOTP = crypto.createHmac("sha256", secret).update(otp.toString()).digest("hex");
+            res.status(200).cookie("otp", hashOTP, { httpOnly: true, secure: true, maxAge: 300000 }).json({ message: "OTP sent successfully" });
+        }
     }catch(error){
         console.error("Error sending OTP:", error);
         res.status(500).json({ message: "Error sending OTP" });
@@ -55,7 +61,7 @@ async function handleUserSignup(req, res) {
             // return res.render("signup", {
             //     error: "Signup failed. Please try again."
             // });
-            return res.status(500).send({error:"Signup failed. Please try again."});
+            return res.status(500).json({error:"Signup failed. Please try again."});
     }
 }
 
@@ -88,10 +94,25 @@ async function handleUserLogout(req, res) {
     return res.redirect("/");
 }
 
+async function handlePasswordReset(req, res) {
+    try{
+        const {email, password} = req.body;
+        const lowerEmail = email.toLowerCase();
+        const hashPassword = crypto.createHmac("sha256", secret).update(password).digest("hex");
+        await User.updateOne({email: lowerEmail}, {password: hashPassword});
+        res.clearCookie("uid");
+        return res.status(200).json({message: "Password reset successfully. Redirecting to login..."});
+    }catch(error){
+        console.error("Password reset error:", error);
+        return res.status(500).json({message: "Password reset failed. Please try again."});
+    }
+}
+
 module.exports = {
     handleUserSignup,
     handleUserLogin,
     handleUserLogout,
     handleSendOtp,
-    handleVerifyOtp
+    handleVerifyOtp,
+    handlePasswordReset
 };

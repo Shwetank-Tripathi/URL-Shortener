@@ -173,7 +173,8 @@
             <button type="button" id="loginbtn">Login</button>
         </form>
         <br />
-        <a onclick="window.location.href = '/signup'; return false;" style="cursor: pointer; color: #4F46E5;">Don't have an account? Sign up</a>
+        <div style="margin-top: 10px;">Don't have an account? <a onclick="window.location.href = '/signup'; return false;" style="cursor: pointer; color: #4F46E5;">Sign up</a></div>
+        <div style="margin-top: 10px;" id="forgot-password"><a onclick="window.location.href = '/forgotpassword'; return false;" style="cursor: pointer; color: #4F46E5;">Forgot password?</a></div>
     </div>
 </body>
 <script>
@@ -251,6 +252,11 @@
         togglePassword.addEventListener("mouseleave", () => {
             passwordInput.type = "password";
         });
+
+        // Forgot password
+        const forgotPassword = document.getElementById("forgot-password");
+
+
     });
 </script>
 </html>

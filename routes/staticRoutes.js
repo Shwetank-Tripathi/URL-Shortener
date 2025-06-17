@@ -34,4 +34,8 @@ router.get("/login",(req,res)=>{
     return res.render("login");
 });
 
+router.get("/forgotpassword",(req,res)=>{
+    return res.render("forgotpassword");
+})
+
 module.exports = router;
