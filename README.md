@@ -1,2 +1,2 @@
-# URL-Shortener
-Site for shortening the URL (Fully made using backend applications and library like ejs, node, express etc)
+# Zap-URL
+Apis and backend to Short your long links (Fully made using backend applications and library like ejs, node, express and mongoDb)
