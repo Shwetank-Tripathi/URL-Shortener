@@ -26,6 +26,20 @@
             margin-bottom: 1rem;
         }
 
+        h1 img {
+            width: 1.5em;
+            height: 1.5em;
+            vertical-align: middle;
+            margin: 0 0.2em;
+            filter: drop-shadow(0 2px 4px rgba(79,70,229,0.15));
+            transition: transform 0.2s;
+        }
+
+        h1:hover img {
+            transform: scale(1.15) rotate(-10deg);
+            filter: drop-shadow(0 4px 8px rgba(79,70,229,0.25));
+        }
+
         .horizontal-line {
             width: 100%;
             margin: 20px 0;
@@ -80,7 +94,7 @@
 
         th, td {
             padding: 12px 16px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid #e5e7eb;
         }
 
@@ -112,12 +126,12 @@
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>Zap<span><img src="/lightning-svgrepo-com.svg"/></span>URL</title>
 </head>
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h1 onclick="window.location.href='/'" style="cursor: pointer;">URL Shortener</h1>
+            <h1 onclick="window.location.href='/'" style="cursor: pointer;">Zap<span><img src="/lightning-svgrepo-com.svg" alt="" style="margin-left: 0px; margin-right: 0px; height: 45px; width: 45px;" /></span>URL</h1>
             <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
                 <% if(typeof user === 'undefined' || user === null) { %>
                     <button onclick="window.location.href='login'">Login</button>
@@ -131,25 +145,25 @@
         
         <% if(typeof user === 'undefined' || user === null) { %>
             <div style="text-align: center; color: #4F46E5; font-size: 1.2rem; margin: 2rem 0;">
-                Please login or signup to use the URL shortener service.
+                Please login or signup to use the service.
             </div>
             <div style="position: relative;">
-                <form onsubmit="event.preventDefault(); window.location.href='login';">
-                    <label>Enter Your Original URL</label>
+                <form onsubmit="event.preventDefault(); window.location.href='login';" style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1rem;">
+                    <label style="font-size: 1.2rem; font-weight: 600;">Wanna Shorten Your URL?</label>
                     <input type="text" name="url" placeholder="https://example.com"/>
                     <button type="submit">Generate</button>
                 </form>
             </div>
         <% } else { %>
             <% if (locals.id) { %>
-                <div class="generated-url">
-                    <span>URL Generated: </span>
+                <div class="generated-url" style="text-align: center; margin-top: 2rem; font-size: 1.2rem; font-weight: 600;">
+                    <span>Zapped URL: </span>
                     <span><a href="<%= `http://${host}/url/visit/${id}` %>"><%= `http://${host}/url/visit/${id}` %></a></span>
                 </div>
             <% } %>
-            <div style="margin-top: 2rem; display: flex; justify-content: center;">
+            <div style="margin-top: rem; display: flex; justify-content: center;">
                 <form method="POST" action="/url/visit">
-                    <label>Enter Your Original URL</label>
+                    <label>Zap it!</label>
                     <input type="text" name="url" placeholder="https://example.com"/>
                     <button type="submit">Generate</button>
                 </form>
@@ -159,19 +173,23 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>S. No</th>
-                                <th>ShortID</th>
-                                <th>Redirect</th>
-                                <th>Clicks</th>
+                                <th class="tableData">S. No</th>
+                                <th class="tableData">ShortID</th>
+                                <th class="tableData">Redirect</th>
+                                <th class="tableData">Clicks</th>
+                                <th class="tableData">Shortened Link</th>
+                                <th class="tableData">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% urls.forEach((url, index) => { %>
                                 <tr>
-                                    <td><%= index+1 %></td>
-                                    <td><%= url.shortId %></td>
-                                    <td><%= url.redirectURL %></td>
-                                    <td><%= url.visitHistory.length %></td>
+                                    <td class="tableData"><%= index+1 %></td>
+                                    <td class="tableData"><%= url.shortId %></td>
+                                    <td class="tableData"><%= url.redirectURL %></td>
+                                    <td class="tableData"><%= url.visitHistory.length %></td>
+                                    <td class="tableData"><a href="<%= `http://${host}/url/visit/${url.shortId}` %>">Link</a></td>
+                                    <td class="tableData"><button onclick="deleteUrl('<%= url.shortId %>')">Delete</button></td>
                                 </tr>
                             <% }) %>
                         </tbody>
@@ -181,4 +199,14 @@
         <% } %>
     </div>
 </body>
+<script>
+    function deleteUrl(shortId){
+        fetch(`/url/delete/${shortId}`, {
+            method: 'DELETE'
+        }).then(response => response.json())
+        .then(data => {
+            window.location.reload();
+        });
+    }
+</script>
 </html>

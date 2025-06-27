@@ -13,7 +13,8 @@ router.get("/", async(req,res)=>{
         const allurls = await URL.find({createdBy: req.user._id});
         return res.render("home", {
             user: req.user,
-            urls: allurls
+            urls: allurls,
+            host: req.headers.host
         });
     } catch (error) {
         console.error("Error fetching URLs:", error);
